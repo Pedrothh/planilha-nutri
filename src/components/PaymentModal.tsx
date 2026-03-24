@@ -37,6 +37,12 @@ export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
             amount: 1, // Sincronizado com Pricing.tsx e backend
             payer: {
               email: userData.email,
+              identification: {
+                type: 'CPF',
+                number: userData.identificationNumber,
+              },
+              firstName: userData.name.split(' ')[0],
+              lastName: userData.name.split(' ').slice(1).join(' ') || 'Cliente',
             },
           },
           customization: {
@@ -50,19 +56,23 @@ export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
               console.log('Brick Pronto');
               setLoading(false);
             },
-            onSubmit: (formData: any) => {
-              console.log('Botão Pay clicado! Dados brutos do Brick:', formData);
+            onSubmit: (param: any) => {
+              console.log('Botão Pay clicado! Dados brutos do Brick:', param);
               
               return new Promise((resolve, reject) => {
-                // Mapeamento extra-seguro para o Payment Brick
-                const payment_method_id = formData.payment_method_id;
-                const token = formData.token;
-                const installments = Number(formData.installments) || 1;
-                const issuer_id = formData.issuer_id;
+                // A estrutura do Payment Brick geralmente é { formData, selectedPaymentMethod }
+                const brickData = param.formData || param;
+                
+                const payment_method_id = brickData.payment_method_id;
+                const token = brickData.token;
+                const installments = Number(brickData.installments) || 1;
+                const issuer_id = brickData.issuer_id;
+
+                console.log('Dados extraídos para o backend:', { payment_method_id, token, installments, issuer_id });
 
                 // Validação básica no frontend para evitar chamadas inúteis
                 if (!payment_method_id || !token) {
-                  const errorMsg = 'Dados do cartão incompletos. Verifique os campos.';
+                  const errorMsg = 'Dados do cartão incompletos. Verifique se preencheu todos os campos corretamente.';
                   console.error(errorMsg, { payment_method_id, token });
                   setError(errorMsg);
                   return reject();
@@ -74,7 +84,7 @@ export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
                   token,
                   installments,
                   issuer_id,
-                  identificationNumber: formData.payer?.identification?.number || userData.identificationNumber
+                  identificationNumber: brickData.payer?.identification?.number || userData.identificationNumber
                 };
 
                 console.log('Enviando para o backend:', JSON.stringify(dataToSend, null, 2));
