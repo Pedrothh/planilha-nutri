@@ -39,6 +39,11 @@ app.post('/api/create-payment', async (req, res) => {
     console.log('Recebendo requisição de pagamento:', JSON.stringify(req.body, null, 2));
     const { email, name, payment_method_id, token, installments, issuer_id, identificationNumber } = req.body;
 
+    // Validação extra no backend
+    if (!payment_method_id) {
+      return res.status(400).json({ error: 'payment_method_id é obrigatório' });
+    }
+
     const paymentData = {
       body: {
         transaction_amount: 1.00, // Sincronizado com o Pricing.tsx

@@ -51,21 +51,33 @@ export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
               setLoading(false);
             },
             onSubmit: (formData: any) => {
-              console.log('Botão Pay clicado! Dados do Brick:', formData);
+              console.log('Botão Pay clicado! Dados brutos do Brick:', formData);
               
               return new Promise((resolve, reject) => {
-                // Em produção, o Brick envia payment_method_id (bandeira como visa, master)
-                // Se ele vier vazio, o Mercado Pago rejeita. Não devemos usar 'credit_card' como fallback.
+                // Mapeamento extra-seguro para o Payment Brick
+                const payment_method_id = formData.payment_method_id;
+                const token = formData.token;
+                const installments = Number(formData.installments) || 1;
+                const issuer_id = formData.issuer_id;
+
+                // Validação básica no frontend para evitar chamadas inúteis
+                if (!payment_method_id || !token) {
+                  const errorMsg = 'Dados do cartão incompletos. Verifique os campos.';
+                  console.error(errorMsg, { payment_method_id, token });
+                  setError(errorMsg);
+                  return reject();
+                }
+
                 const dataToSend = {
                   ...userData,
-                  payment_method_id: formData.payment_method_id,
-                  token: formData.token,
-                  installments: Number(formData.installments) || 1,
-                  issuer_id: formData.issuer_id,
+                  payment_method_id,
+                  token,
+                  installments,
+                  issuer_id,
                   identificationNumber: formData.payer?.identification?.number || userData.identificationNumber
                 };
 
-                console.log('Enviando para o backend:', dataToSend);
+                console.log('Enviando para o backend:', JSON.stringify(dataToSend, null, 2));
 
                 axios.post(`${API_URL}/create-payment`, dataToSend)
                     .then((response) => {
