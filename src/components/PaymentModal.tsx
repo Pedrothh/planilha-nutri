@@ -56,7 +56,7 @@ export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
               return new Promise((resolve, reject) => {
                 const dataToSend = {
                   ...userData,
-                  payment_method_id: formData.payment_method_id,
+                  payment_method_id: formData.payment_method_id || 'credit_card',
                   token: formData.token,
                   installments: formData.installments,
                   issuer_id: formData.issuer_id,
