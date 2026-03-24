@@ -6,11 +6,17 @@ require('dotenv').config();
 
 const app = express();
 app.use(express.json());
-app.use(cors({
-  origin: process.env.FRONTEND_URL || '*',
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(cors()); // Temporariamente mais aberto para depurar o deploy
+
+// Rota de teste para verificar se o servidor está online
+app.get('/', (req, res) => {
+  res.json({ status: 'online', message: 'Servidor da Planilha Nutri está rodando!' });
+});
+
+// Rota de teste da API
+app.get('/api', (req, res) => {
+  res.json({ message: 'API está funcionando! Use os endpoints POST /api/create-payment ou GET /api/payment-status/:id' });
+});
 
 // Configurar Mercado Pago
 const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
