@@ -54,13 +54,15 @@ export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
               console.log('Botão Pay clicado! Dados do Brick:', formData);
               
               return new Promise((resolve, reject) => {
+                // Em produção, o Brick envia payment_method_id (bandeira como visa, master)
+                // Se ele vier vazio, o Mercado Pago rejeita. Não devemos usar 'credit_card' como fallback.
                 const dataToSend = {
                   ...userData,
-                  payment_method_id: formData.payment_method_id || 'credit_card',
+                  payment_method_id: formData.payment_method_id,
                   token: formData.token,
-                  installments: Number(formData.installments),
+                  installments: Number(formData.installments) || 1,
                   issuer_id: formData.issuer_id,
-                  identificationNumber: formData.payer?.identification?.number || userData.identificationNumber // Fallback caso necessário
+                  identificationNumber: formData.payer?.identification?.number || userData.identificationNumber
                 };
 
                 console.log('Enviando para o backend:', dataToSend);

@@ -43,7 +43,7 @@ app.post('/api/create-payment', async (req, res) => {
       body: {
         transaction_amount: 1.00, // Sincronizado com o Pricing.tsx
         description: 'Planilha NutriPremium',
-        payment_method_id: payment_method_id || 'pix',
+        payment_method_id: payment_method_id, // Em produção, deve ser a bandeira (visa, master, etc)
         payer: {
           email: email || 'comprador@email.com',
           first_name: (name || 'Comprador').split(' ')[0],
