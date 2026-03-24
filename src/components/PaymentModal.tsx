@@ -34,7 +34,7 @@ export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
       const renderCardBrick = async (bricksBuilder: any) => {
         const settings = {
           initialization: {
-            amount: 20,
+            amount: 1,
             payer: {
               email: userData.email,
             },
