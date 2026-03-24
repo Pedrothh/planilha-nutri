@@ -20,7 +20,7 @@ export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
   const [step, setStep] = useState<'form' | 'method' | 'qr' | 'card-form' | 'processing' | 'success'>('form');
   const [loading, setLoading] = useState(false);
   const [paymentData, setPaymentData] = useState<{ id: string; qr_code?: string; qr_code_base64?: string } | null>(null);
-  const [userData, setUserData] = useState({ name: '', email: '' });
+  const [userData, setUserData] = useState({ name: '', email: '', identificationNumber: '' });
   const [error, setError] = useState<string | null>(null);
 
   // Inicializar Mercado Pago Brick para Cartão
@@ -58,9 +58,9 @@ export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
                   ...userData,
                   payment_method_id: formData.payment_method_id || 'credit_card',
                   token: formData.token,
-                  installments: formData.installments,
+                  installments: Number(formData.installments),
                   issuer_id: formData.issuer_id,
-                  identificationNumber: formData.payer?.identification?.number
+                  identificationNumber: formData.payer?.identification?.number || userData.identificationNumber // Fallback caso necessário
                 };
 
                 console.log('Enviando para o backend:', dataToSend);
@@ -209,6 +209,21 @@ export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
                     placeholder="seu@email.com"
                     value={userData.email}
                     onChange={(e) => setUserData({ ...userData, email: e.target.value })}
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">CPF</label>
+                <div className="relative">
+                  <User className="absolute left-3 top-3 text-gray-400" size={20} />
+                  <input 
+                    required
+                    type="text"
+                    className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition"
+                    placeholder="000.000.000-00"
+                    value={userData.identificationNumber}
+                    onChange={(e) => setUserData({ ...userData, identificationNumber: e.target.value.replace(/\D/g, '') })}
                   />
                 </div>
               </div>

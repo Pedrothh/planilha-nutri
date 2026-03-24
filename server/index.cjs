@@ -62,7 +62,14 @@ app.post('/api/create-payment', async (req, res) => {
     if (payment_method_id !== 'pix') {
       paymentData.body.token = token;
       paymentData.body.installments = Number(installments) || 1;
-      paymentData.body.issuer_id = issuer_id;
+      
+      // Alguns issuers podem ser strings, outros números dependendo do SDK
+      if (issuer_id) {
+        paymentData.body.issuer_id = issuer_id;
+      }
+      
+      // Adicionar ponto de interação para cartão se necessário (opcional para cartão, mas bom ter)
+      // O erro 10102 as vezes é causado por falta de campos do payer em produção
     }
 
     const result = await payment.create(paymentData);
