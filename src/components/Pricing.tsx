@@ -29,7 +29,7 @@ export default function Pricing() {
                 <p className="text-gray-500">Planilha Completa + Suporte</p>
               </div>
               <div className="flex items-end mb-6">
-                <span className="mb-2 mr-2 text-2xl font-bold text-gray-400 line-through">R$ 99,00</span>
+                <span className="mb-2 mr-2 text-2xl font-bold text-gray-400 line-through">R$ 97,00</span>
                 <span className="text-5xl font-bold text-green-600">R$ 1,00</span>
               </div>
               <ul className="mb-10 space-y-4">

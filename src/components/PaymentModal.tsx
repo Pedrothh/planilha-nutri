@@ -34,7 +34,7 @@ export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
       const renderCardBrick = async (bricksBuilder: any) => {
         const settings = {
           initialization: {
-            amount: 1,
+            amount: 1, // Sincronizado com Pricing.tsx e backend
             payer: {
               email: userData.email,
             },
@@ -249,7 +249,7 @@ export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
         {step === 'method' && (
           <div className="p-8">
             <h3 className="mb-2 text-2xl font-bold text-gray-900 text-center">Forma de Pagamento</h3>
-            <p className="mb-6 text-gray-600 text-center">Escolha como deseja pagar os R$ 20,00.</p>
+            <p className="mb-6 text-gray-600 text-center">Escolha como deseja pagar R$ 1,00.</p>
             
             <div className="space-y-4">
               <button 

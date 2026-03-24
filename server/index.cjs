@@ -36,17 +36,18 @@ const payment = new Payment(client);
 // Rota para criar pagamento (PIX ou Cartão)
 app.post('/api/create-payment', async (req, res) => {
   try {
+    console.log('Recebendo requisição de pagamento:', JSON.stringify(req.body, null, 2));
     const { email, name, payment_method_id, token, installments, issuer_id, identificationNumber } = req.body;
 
     const paymentData = {
       body: {
-        transaction_amount: 1.00,
+        transaction_amount: 1.00, // Sincronizado com o Pricing.tsx
         description: 'Planilha NutriPremium',
         payment_method_id: payment_method_id || 'pix',
         payer: {
           email: email || 'comprador@email.com',
-          first_name: name || 'Comprador',
-          last_name: 'Teste',
+          first_name: (name || 'Comprador').split(' ')[0],
+          last_name: (name || 'Comprador').split(' ').slice(1).join(' ') || 'Cliente',
           identification: {
             type: 'CPF',
             number: identificationNumber || '12345678909'
@@ -96,9 +97,15 @@ app.post('/api/create-payment', async (req, res) => {
     } else {
       console.error('Erro ao criar pagamento:', error);
     }
+    
+    // Log detalhado do erro do Mercado Pago
+    if (error.cause) {
+      console.error('Causa detalhada do erro MP:', JSON.stringify(error.cause, null, 2));
+    }
+
     res.status(error.status || 500).json({ 
       error: error.message,
-      detail: error.status === 401 ? 'Troque o token no arquivo .env por um que comece com TEST-.' : error.cause
+      detail: error.status === 401 ? 'Troque o token no arquivo .env por um que comece com TEST-.' : (error.cause || 'Erro desconhecido no Mercado Pago')
     });
   }
 });
