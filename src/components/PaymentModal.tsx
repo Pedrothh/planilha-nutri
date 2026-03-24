@@ -19,7 +19,6 @@ const PUBLIC_KEY = import.meta.env.VITE_MERCADO_PAGO_PUBLIC_KEY;
 export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
   const [step, setStep] = useState<'form' | 'method' | 'qr' | 'card-form' | 'processing' | 'success'>('form');
   const [loading, setLoading] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'pix' | 'credit_card'>('pix');
   const [paymentData, setPaymentData] = useState<{ id: string; qr_code?: string; qr_code_base64?: string } | null>(null);
   const [userData, setUserData] = useState({ name: '', email: '' });
   const [error, setError] = useState<string | null>(null);
@@ -240,7 +239,6 @@ export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
             <div className="space-y-4">
               <button 
                 onClick={() => {
-                  setPaymentMethod('pix');
                   handleCreatePixPayment();
                 }}
                 disabled={loading}
